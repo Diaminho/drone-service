@@ -1,9 +1,7 @@
 package test.drone.entity;
 
 import jakarta.persistence.*;
-import jakarta.validation.constraints.Max;
 import jakarta.validation.constraints.Min;
-import jakarta.validation.constraints.Size;
 import lombok.Data;
 
 import java.io.Serializable;
@@ -16,12 +14,12 @@ public class DroneToMedication implements Serializable {
     private DroneMedicationKey id;
 
     @ManyToOne
-    @MapsId("studentId")
+    @MapsId("droneSerialNumber")
     @JoinColumn(name = "drone_serial_number")
     private Drone drone;
 
     @ManyToOne
-    @MapsId("courseId")
+    @MapsId("medicationId")
     @JoinColumn(name = "medication_id")
     private Medication medication;
 

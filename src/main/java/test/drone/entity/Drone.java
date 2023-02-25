@@ -24,7 +24,7 @@ public class Drone implements Serializable {
     @Min(0)
     @Max(500)
     @Column(name = "weight_limit", nullable = false)
-    private Long weightLimit;
+    private Double weightLimit;
 
     @Min(0)
     @Max(100)

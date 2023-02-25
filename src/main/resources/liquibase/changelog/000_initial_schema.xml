@@ -9,7 +9,7 @@
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="model" type="varchar"/>
-            <column name="weight_limit" type="bigint"/>
+            <column name="weight_limit" type="double"/>
             <column name="battery_capacity" type="smallint"/>
             <column name="state" type="varchar"/>
         </createTable>
@@ -20,7 +20,7 @@
                 <constraints primaryKey="true" nullable="false" />
             </column>
             <column name="name" type="varchar"/>
-            <column name="weight" type="bigint"/>
+            <column name="weight" type="double"/>
             <column name="code" type="varchar"/>
             <column name="image" type="varchar"/>
         </createTable>

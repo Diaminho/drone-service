@@ -20,7 +20,7 @@ public class Medication implements Serializable {
     private String name;
 
     @Column(name = "weight")
-    private Long weight;
+    private Double weight;
 
     @Column(name = "code")
     @Pattern(regexp = "^[A-Z\\d_]*$")

@@ -20,7 +20,7 @@ public class DroneController {
     private final DroneService droneService;
 
     @PostMapping
-    public DroneDto registerDrone(@Valid CreateDroneDto information) {
+    public DroneDto registerDrone(@RequestBody @Valid CreateDroneDto information) {
         return droneService.registerDrone(information);
     }
 
@@ -40,7 +40,7 @@ public class DroneController {
     }
 
     @GetMapping("{serialNumber}/load")
-    public List<LoadedMedicationDto> checkLoadingDrone(@PathVariable @Size(min = 1, max = 100) String serialNumber) {
+    public DroneLoadInformation checkLoadingDrone(@PathVariable @Size(min = 1, max = 100) String serialNumber) {
         return droneService.checkLoadingDrone(serialNumber);
     }
 }

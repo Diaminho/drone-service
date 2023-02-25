@@ -1,3 +1,8 @@
+server:
+  error:
+    include-message: always
+    include-binding-errors: always
+
 spring:
   h2:
     console:
@@ -16,3 +21,5 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:liquibase/master.xml
+
+cron-expression: ${cron.expression:"*/30 * * * * *"}

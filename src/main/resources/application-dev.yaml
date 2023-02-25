@@ -16,8 +16,8 @@ spring:
   liquibase:
     enabled: true
     change-log: classpath:liquibase/master.xml
+    url: jdbc:h2:file:~/drones_db;AUTO_SERVER=TRUE
+    user: sa
+    password: password
 
-  sql:
-    init:
-      mode: embedded
-      data-locations: classpath:init_data.sql
+cron-expression: "*/30 * * * * *"
