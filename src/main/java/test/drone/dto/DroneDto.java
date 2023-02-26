@@ -9,12 +9,19 @@ import test.drone.entity.State;
 
 import java.util.List;
 
+/**
+ * Drone's database entity dto
+ * @param serialNumber of drone
+ * @param model of drone
+ * @param weightLimit of drone
+ * @param batteryCapacity of drone
+ * @param state of drone
+ */
 public record DroneDto(
         @Size(min = 1, max = 100) String serialNumber,
         @NotNull Model model,
         @Min(0) @Max(500) Double weightLimit,
         @Min(0) @Max(100) Short batteryCapacity,
-        @NotNull State state,
-        List<MedicationDto> loadedMedications
+        @NotNull State state
 ) {
 }

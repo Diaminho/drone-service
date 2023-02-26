@@ -3,6 +3,9 @@ package test.drone.exception;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
+/**
+ * Exception for discharged drone
+ */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class DroneDischargedException extends RuntimeException {
     private static final String DEFAULT_MESSAGE = "Drone is discharged";

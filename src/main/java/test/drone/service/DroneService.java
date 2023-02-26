@@ -21,6 +21,9 @@ import test.drone.repository.DroneToMedicationRepository;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * Service to manipulate Drone
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
@@ -33,24 +36,38 @@ public class DroneService {
     private final DroneMapper droneMapper;
     private final MedicationService medicationService;
 
+    /**
+     * Create a new drone
+     * @param createDroneDto information to create drone
+     * @return saved drone as dto representation
+     */
     @Transactional(rollbackFor = Exception.class)
-    public DroneDto registerDrone(@Valid CreateDroneDto createDroneDto) {
+    public DroneDto registerDrone(CreateDroneDto createDroneDto) {
+        log.info("Registering a drone: {}", createDroneDto);
         Drone drone = droneMapper.fromCreateDto(createDroneDto);
         var saved = droneRepository.save(drone);
 
-        return droneMapper.droneToDto(saved);
+        var result =  droneMapper.droneToDto(saved);
+
+        log.info("Drone is registered: {}", result);
+
+        return result;
     }
 
+    /**
+     * Receives a battery information for specific drone
+     * @param droneSerialNumber of drone
+     * @return Drone's battery information
+     */
     public BatteryLevelDto getBatteryLevel(String droneSerialNumber) {
-        try {
-            var found = droneRepository.getReferenceById(droneSerialNumber);
-            return droneMapper.toBatteryLevelDto(found);
-        } catch (EntityNotFoundException e) {
-            throw new DroneNotFoundException(droneSerialNumber);
-        }
+        return droneMapper.toBatteryLevelDto(getDrone(droneSerialNumber));
     }
 
-    public List<DroneDto> getAvailableDrones() {
+    /**
+     * Find all drones available for loading
+     * @return List of available drones
+     */
+    public List<DroneDto> getAvailableForLoadingDrones() {
         var foundDrones = droneRepository
                 .findAllAvailableForLoading();
 
@@ -60,9 +77,17 @@ public class DroneService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * Load drone with medications
+     * @param loadDroneInformation medication and drone information
+     * @return drone information
+     */
     @Transactional(rollbackFor = Exception.class)
     public DroneDto loadDrone(LoadDroneDto loadDroneInformation) {
-        var foundDrone = droneRepository.getReferenceById(loadDroneInformation.serialNumber());
+        var serialNumber = loadDroneInformation.serialNumber();
+        log.info("Medications loading process is started for drone: {}", serialNumber);
+
+        var foundDrone = getDrone(serialNumber);
 
         // check battery level
         if (foundDrone.getBatteryCapacity() < MINIMAL_CHARGING_FOR_WORKING) {
@@ -90,13 +115,23 @@ public class DroneService {
         // generate droneToMedication
         generateDroneToMedicationInformation(foundDrone, foundMedications);
 
+        // add images
+
         var saved = droneRepository.save(foundDrone);
-        return droneMapper.droneToDto(saved);
+        var result = droneMapper.droneToDto(saved);
+
+        log.info("Drone is loading: {}", result);
+
+        return result;
     }
 
-    public DroneLoadInformation checkLoadingDrone(String droneSerialNumber) {
-        var foundDrone = droneRepository
-                .getReferenceById(droneSerialNumber);
+    /**
+     * Check loaded medications for drone
+     * @param droneSerialNumber of drone
+     * @return information about loaded medications
+     */
+    public DroneLoadInformationDto checkLoadingDrone(String droneSerialNumber) {
+        var foundDrone = getDrone(droneSerialNumber);
 
         var loadedMedications = medicationService.findAllLoadedMedicationsForDrone(foundDrone);
         return droneMapper.toDroneLoadInformation(foundDrone, loadedMedications);
@@ -117,6 +152,7 @@ public class DroneService {
                 .forEach(item -> {
                     var entity = droneToMedicationMapper.toDroneToMediation(foundDrone, item);
                     droneToMedicationRepository.save(entity);
+                    log.info("Medication {} is loading to drone: {}", item.medication(), entity.getDrone());
                 });
     }
 
@@ -129,5 +165,13 @@ public class DroneService {
                     return medicationService.toCreateDroneToMeditation(found, item.count());
                 })
                 .toList();
+    }
+
+    private Drone getDrone(String droneSerialNumber) {
+        try {
+            return droneRepository.getReferenceById(droneSerialNumber);
+        } catch (EntityNotFoundException e) {
+            throw new DroneNotFoundException(droneSerialNumber);
+        }
     }
 }

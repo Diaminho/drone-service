@@ -1,7 +1,11 @@
 package test.drone.service;
 
+import com.google.common.util.concurrent.ListenableFuture;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
+import org.springframework.kafka.core.KafkaTemplate;
+import org.springframework.kafka.support.SendResult;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Component;
 import test.drone.entity.Drone;
@@ -12,27 +16,30 @@ import test.drone.repository.DroneRepository;
 @RequiredArgsConstructor
 @Slf4j
 public class CheckBatteryTask {
+    @Value("${kafka.topic.name}")
+    private String topicName;
+
     private final DroneRepository droneRepository;
+    private final KafkaTemplate<String, DroneBatteryCheckLevelEvent> kafkaTemplate;
 
     @Scheduled(cron = "${cron-expression}")
     public void checkBatteryStatusForDrone() {
-        log.info("checkBatteryStatusForDrone is started");
         var existingDrones = droneRepository.findAll();
 
         existingDrones
                 .parallelStream()
                 .forEach(this::logBatteryStatus);
-
-        log.info("checkBatteryStatusForDrone is finished");
     }
 
 
-    // TODO think about persistence, kafka etc
     private void logBatteryStatus(Drone drone) {
         var event = new DroneBatteryCheckLevelEvent();
         event.setCurrentBatteryLevel(drone.getBatteryCapacity());
         event.setDroneSerialNumber(drone.getSerialNumber());
 
-        log.info("Event: " + event);
+        // don't check result
+        kafkaTemplate.send(topicName, event);
+
+        log.info("Sent Event to kafka: " + event);
     }
 }

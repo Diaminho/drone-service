@@ -11,6 +11,9 @@ import test.drone.service.DroneService;
 
 import java.util.List;
 
+/**
+ * Controller for interaction with drones
+ */
 @RestController
 @RequestMapping("drones")
 @Slf4j
@@ -26,7 +29,7 @@ public class DroneController {
 
     @GetMapping("available")
     public List<DroneDto> getAvailableDrones() {
-        return droneService.getAvailableDrones();
+        return droneService.getAvailableForLoadingDrones();
     }
 
     @GetMapping("{serialNumber}/battery")
@@ -40,7 +43,7 @@ public class DroneController {
     }
 
     @GetMapping("{serialNumber}/load")
-    public DroneLoadInformation checkLoadingDrone(@PathVariable @Size(min = 1, max = 100) String serialNumber) {
+    public DroneLoadInformationDto checkLoadingDrone(@PathVariable @Size(min = 1, max = 100) String serialNumber) {
         return droneService.checkLoadingDrone(serialNumber);
     }
 }

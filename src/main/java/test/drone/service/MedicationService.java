@@ -24,36 +24,41 @@ public class MedicationService {
     private final MedicationRepository medicationRepository;
     private final DroneToMedicationRepository droneToMedicationRepository;
     private final MedicationMapper medicationMapper;
-
     private final DroneToMedicationMapper droneToMedicationMapper;
-
-    public MedicationDto getById(Long id) {
-        var found = getByIdEntity(id);
-        return medicationMapper.toDto(found);
-    }
+    private final MinioService minioService;
 
     public Medication getByIdEntity(Long id) {
         return medicationRepository.getReferenceById(id);
     }
 
-    public List<MedicationDto> findAll() {
-        var found = medicationRepository.findAll();
-
-        return found
-                .stream()
-                .map(medicationMapper::toDto)
-                .collect(Collectors.toList());
-    }
-
-    public CreateDroneToMedicationDto toCreateDroneToMeditation (Medication medication, Short count) {
+    /**
+     * Returns information about current medication weight.
+     * @param medication Medication information
+     * @param count Medication count
+     * @return information about current medication weight.
+     */
+    public CreateDroneToMedicationDto toCreateDroneToMeditation(Medication medication, Short count) {
         return medicationMapper.toCreateDroneToMeditation(medication, count);
     }
 
+    /**
+     * Method for load all information about loaded to drone medications
+     * @param drone Drone object to search medications
+     * @return List of loaded medication information
+     */
     public List<LoadMedicationDto> findAllLoadedMedicationsForDrone(Drone drone) {
         List<DroneToMedication> found = droneToMedicationRepository.findAllByDrone(drone);
 
         return found
                 .stream()
+                .peek(droneToMedication -> {
+                    var medication = droneToMedication.getMedication();
+                    //download image
+                    var base64Image = minioService.downloadFile(medication.getImage());
+                    medication.setImage(base64Image);
+
+                    droneToMedication.setMedication(medication);
+                })
                 .map(droneToMedicationMapper::toLoadedMedicationDto)
                 .collect(Collectors.toList());
     }

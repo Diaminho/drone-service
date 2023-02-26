@@ -4,22 +4,33 @@ server:
     include-binding-errors: always
 
 spring:
-  h2:
-    console:
-      enabled: true
+  kafka:
+    producer:
+      client-id: drones-service
+      bootstrap-servers: ${KAFKA_SERVER}
   datasource:
-    url: ${db.url}
-    username: ${db.user}
-    password: ${db.password}
-    driverClassName: ${db.driver}
+    url: ${DB_URL}
+    username: ${DB_USER}
+    password: ${DB_PASSWORD}
+    driverClassName: org.postgresql.Driver
   jpa:
     spring:
       jpa:
-        database-platform: ${db.dialect}
+        database-platform: org.hibernate.dialect.PostgreSQLDialect
     hibernate:
       ddl-auto: validate
   liquibase:
     enabled: true
     change-log: classpath:liquibase/master.xml
 
-cron-expression: ${cron.expression:"*/30 * * * * *"}
+cron-expression: ${CRON_EXPRESSION:"*/30 * * * * *"}
+
+minio:
+  url: ${MINIO_URL:http://localhost:9000}
+  access-key: ${MINIO_ACCESS_KEY:test}
+  secret-key: ${MINIO_SECRET_KEY:password}
+  bucket-name: ${MINIO_BUCKET_NAME:medication-images}
+
+kafka:
+  topic:
+    name: ${KAFKA_TOPIC_NAME}

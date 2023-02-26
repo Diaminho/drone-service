@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <databaseChangeLog xmlns="http://www.liquibase.org/xml/ns/dbchangelog" xmlns:ext="http://www.liquibase.org/xml/ns/dbchangelog-ext" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://www.liquibase.org/xml/ns/dbchangelog http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-3.4.xsd http://www.liquibase.org/xml/ns/dbchangelog-ext http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-ext.xsd">
     <changeSet id="001" author="Dmitriy Pichugin">
-        <comment>Init data insertion</comment>
+        <comment>Init TEST data insertion</comment>
 
         <!-- insert data to drones table !-->
         <insert tableName="drones">
@@ -38,19 +38,19 @@
             <column name="name" value="Pill One"/>
             <column name="weight" value="12"/>
             <column name="code" value="13123123"/>
-            <column name="image" value=""/>
+            <column name="image" value="http://minio:9000/medications-images/1.jpg"/>
         </insert>
         <insert tableName="medications">
             <column name="name" value="Pill Two"/>
             <column name="weight" value="85"/>
             <column name="code" value="99877666"/>
-            <column name="image" value=""/>
+            <column name="image" value="http://minio:9000/medications-images/2.jpg"/>
         </insert>
         <insert tableName="medications">
             <column name="name" value="Threat Two"/>
             <column name="weight" value="185"/>
             <column name="code" value="2222"/>
-            <column name="image" value=""/>
+            <column name="image" value="http://minio:9000/medications-images/3.jpg"/>
         </insert>
 
         <!-- insert data for current deliveries !-->
