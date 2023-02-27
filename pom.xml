@@ -168,9 +168,6 @@
                 <executions>
                     <execution>
                         <id>default</id>
-                        <goals>
-                            <goal>build</goal>
-                        </goals>
                     </execution>
                 </executions>
                 <configuration>

@@ -21,6 +21,7 @@ import test.drone.repository.DroneRepository;
 import test.drone.repository.DroneToMedicationRepository;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertThrows;
@@ -51,7 +52,7 @@ public class DroneServiceTest {
         var droneSerialNumber = "212";
 
         var drone = mock(Drone.class);
-        when(droneRepository.getReferenceById(eq(droneSerialNumber))).thenReturn(drone);
+        when(droneRepository.findById(eq(droneSerialNumber))).thenReturn(Optional.of(drone));
 
         var batteryLevelDto = mock(BatteryLevelDto.class);
         when(droneMapper.toBatteryLevelDto(eq(drone))).thenReturn(batteryLevelDto);
@@ -65,7 +66,7 @@ public class DroneServiceTest {
     public void batteryLevelNotFoundTest() {
         var droneSerialNumber = "212";
 
-        when(droneRepository.getReferenceById(eq(droneSerialNumber))).thenThrow(new EntityNotFoundException("test"));
+        when(droneRepository.findById(eq(droneSerialNumber))).thenThrow(new DroneNotFoundException("test"));
 
         assertThrows(DroneNotFoundException.class, () -> droneService.getBatteryLevel(droneSerialNumber));
 
@@ -90,7 +91,7 @@ public class DroneServiceTest {
         var droneSerialNumber = "22";
 
         var drone = mock(Drone.class);
-        when(droneRepository.getReferenceById(eq(droneSerialNumber))).thenReturn(drone);
+        when(droneRepository.findById(eq(droneSerialNumber))).thenReturn(Optional.of(drone));
 
         var loadMedicationDto = mock(LoadMedicationDto.class);
         var listLoadMedicationDto = Collections.singletonList(loadMedicationDto);
@@ -132,7 +133,7 @@ public class DroneServiceTest {
         when(drone.getBatteryCapacity()).thenReturn((short) 26);
         when(drone.getState()).thenReturn(State.IDLE);
         when(drone.getWeightLimit()).thenReturn(weightLimit);
-        when(droneRepository.getReferenceById(eq(serialNumber))).thenReturn(drone);
+        when(droneRepository.findById(eq(serialNumber))).thenReturn(Optional.of(drone));
 
         var medicationId = 1L;
         short count = 1;
@@ -145,12 +146,12 @@ public class DroneServiceTest {
         double weight = 25;
         var medication = mock(Medication.class);
         when(medication.getWeight()).thenReturn(weight);
-        when(medicationService.getByIdEntity(eq(medicationId))).thenReturn(medication);
+        when(medicationService.findById(eq(medicationId))).thenReturn(medication);
 
         var createDroneToMedicationDto = mock(CreateDroneToMedicationDto.class);
         when(createDroneToMedicationDto.medication()).thenReturn(medication);
         when(createDroneToMedicationDto.count()).thenReturn(count);
-        when(medicationService.toCreateDroneToMeditation(eq(medication), any())).thenReturn(createDroneToMedicationDto);
+        when(medicationService.toCreateDroneToMedication(eq(medication), any())).thenReturn(createDroneToMedicationDto);
 
         var droneDto = mock(DroneDto.class);
         when(droneMapper.droneToDto(eq(drone))).thenReturn(droneDto);
@@ -176,7 +177,7 @@ public class DroneServiceTest {
 
         var drone = mock(Drone.class);
         when(drone.getBatteryCapacity()).thenReturn((short) 24);
-        when(droneRepository.getReferenceById(eq(serialNumber))).thenReturn(drone);
+        when(droneRepository.findById(eq(serialNumber))).thenReturn(Optional.of(drone));
 
         assertThrows(DroneDischargedException.class, () -> droneService.loadDrone(loadDroneDto));
 
@@ -193,7 +194,7 @@ public class DroneServiceTest {
         var drone = mock(Drone.class);
         when(drone.getBatteryCapacity()).thenReturn((short) 26);
         when(drone.getState()).thenReturn(State.LOADING);
-        when(droneRepository.getReferenceById(eq(serialNumber))).thenReturn(drone);
+        when(droneRepository.findById(eq(serialNumber))).thenReturn(Optional.of(drone));
 
         assertThrows(DroneBusyException.class, () -> droneService.loadDrone(loadDroneDto));
 
@@ -212,7 +213,7 @@ public class DroneServiceTest {
         when(drone.getBatteryCapacity()).thenReturn((short) 26);
         when(drone.getState()).thenReturn(State.IDLE);
         when(drone.getWeightLimit()).thenReturn(weightLimit);
-        when(droneRepository.getReferenceById(eq(serialNumber))).thenReturn(drone);
+        when(droneRepository.findById(eq(serialNumber))).thenReturn(Optional.of(drone));
 
         var medicationId = 1L;
         short count = 1;
@@ -225,12 +226,12 @@ public class DroneServiceTest {
         double weight = 25;
         var medication = mock(Medication.class);
         when(medication.getWeight()).thenReturn(weight);
-        when(medicationService.getByIdEntity(eq(medicationId))).thenReturn(medication);
+        when(medicationService.findById(eq(medicationId))).thenReturn(medication);
 
         var createDroneToMedicationDto = mock(CreateDroneToMedicationDto.class);
         when(createDroneToMedicationDto.medication()).thenReturn(medication);
         when(createDroneToMedicationDto.count()).thenReturn(count);
-        when(medicationService.toCreateDroneToMeditation(eq(medication), any())).thenReturn(createDroneToMedicationDto);
+        when(medicationService.toCreateDroneToMedication(eq(medication), any())).thenReturn(createDroneToMedicationDto);
 
         assertThrows(DroneOverweightException.class, () -> droneService.loadDrone(loadDroneDto));
 

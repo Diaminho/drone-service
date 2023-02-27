@@ -5,10 +5,10 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import test.drone.dto.CreateDroneToMedicationDto;
 import test.drone.dto.LoadMedicationDto;
-import test.drone.dto.MedicationDto;
 import test.drone.entity.Drone;
 import test.drone.entity.DroneToMedication;
 import test.drone.entity.Medication;
+import test.drone.exception.MedicationNotFoundException;
 import test.drone.mapper.DroneToMedicationMapper;
 import test.drone.mapper.MedicationMapper;
 import test.drone.repository.DroneToMedicationRepository;
@@ -27,8 +27,8 @@ public class MedicationService {
     private final DroneToMedicationMapper droneToMedicationMapper;
     private final MinioService minioService;
 
-    public Medication getByIdEntity(Long id) {
-        return medicationRepository.getReferenceById(id);
+    public Medication findById(Long id) {
+        return medicationRepository.findById(id).orElseThrow(() -> new MedicationNotFoundException(id));
     }
 
     /**
@@ -37,8 +37,8 @@ public class MedicationService {
      * @param count Medication count
      * @return information about current medication weight.
      */
-    public CreateDroneToMedicationDto toCreateDroneToMeditation(Medication medication, Short count) {
-        return medicationMapper.toCreateDroneToMeditation(medication, count);
+    public CreateDroneToMedicationDto toCreateDroneToMedication(Medication medication, Short count) {
+        return medicationMapper.toCreateDroneToMedication(medication, count);
     }
 
     /**

@@ -1,11 +1,8 @@
 package test.drone.mapper;
 
 import org.mapstruct.Mapper;
-import org.mapstruct.Mapping;
 import test.drone.dto.CreateDroneToMedicationDto;
-import test.drone.dto.LoadMedicationDto;
 import test.drone.dto.MedicationDto;
-import test.drone.entity.DroneToMedication;
 import test.drone.entity.Medication;
 
 /**
@@ -27,5 +24,5 @@ public interface MedicationMapper {
      * @param count Medication count
      * @return dto
      */
-    CreateDroneToMedicationDto toCreateDroneToMeditation(Medication medication, Short count);
+    CreateDroneToMedicationDto toCreateDroneToMedication(Medication medication, Short count);
 }

@@ -14,6 +14,7 @@ import test.drone.repository.DroneToMedicationRepository;
 import test.drone.repository.MedicationRepository;
 
 import java.util.Collections;
+import java.util.Optional;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.eq;
@@ -43,9 +44,9 @@ public class MedicationServiceTest {
 
         var medication = mock(Medication.class);
 
-        when(medicationRepository.getReferenceById(eq(id))).thenReturn(medication);
+        when(medicationRepository.findById(eq(id))).thenReturn(Optional.of(medication));
 
-        var found = medicationService.getByIdEntity(id);
+        var found = medicationService.findById(id);
         assertEquals(medication, found);
     }
 
@@ -86,12 +87,12 @@ public class MedicationServiceTest {
     }
 
     @Test
-    public void toCreateDroneToMeditationTest() {
+    public void toCreateDroneToMedicationTest() {
         short count = 1;
         var medication = mock(Medication.class);
 
-        medicationService.toCreateDroneToMeditation(medication, count);
+        medicationService.toCreateDroneToMedication(medication, count);
 
-        verify(medicationMapper, times(1)).toCreateDroneToMeditation(any(), any());
+        verify(medicationMapper, times(1)).toCreateDroneToMedication(any(), any());
     }
 }

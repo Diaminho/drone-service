@@ -1,7 +1,5 @@
 package test.drone.service;
 
-import jakarta.persistence.EntityNotFoundException;
-import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
@@ -43,6 +41,13 @@ public class DroneService {
      */
     @Transactional(rollbackFor = Exception.class)
     public DroneDto registerDrone(CreateDroneDto createDroneDto) {
+        // validate uniqeu
+        try {
+            getDrone(createDroneDto.serialNumber());
+        } catch (DroneNotFoundException e) {
+            //it is ok
+        }
+
         log.info("Registering a drone: {}", createDroneDto);
         Drone drone = droneMapper.fromCreateDto(createDroneDto);
         var saved = droneRepository.save(drone);
@@ -161,17 +166,13 @@ public class DroneService {
                 .loadedMedications()
                 .stream()
                 .map(item -> {
-                    var found = medicationService.getByIdEntity(item.id());
-                    return medicationService.toCreateDroneToMeditation(found, item.count());
+                    var found = medicationService.findById(item.id());
+                    return medicationService.toCreateDroneToMedication(found, item.count());
                 })
                 .toList();
     }
 
     private Drone getDrone(String droneSerialNumber) {
-        try {
-            return droneRepository.getReferenceById(droneSerialNumber);
-        } catch (EntityNotFoundException e) {
-            throw new DroneNotFoundException(droneSerialNumber);
-        }
+        return droneRepository.findById(droneSerialNumber).orElseThrow(() -> new DroneNotFoundException(droneSerialNumber));
     }
 }

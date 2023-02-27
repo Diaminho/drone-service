@@ -13,8 +13,6 @@ import test.drone.entity.DroneToMedication;
  */
 @Mapper
 public interface DroneToMedicationMapper {
-
-
     /**
      * Generates DroneToMedication Entity to link loaded medications and drone
      * @param drone Drone information

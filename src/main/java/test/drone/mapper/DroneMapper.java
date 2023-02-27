@@ -12,7 +12,6 @@ import java.util.List;
  */
 @Mapper
 public interface DroneMapper {
-
     /**
      * Generate Drone Entity
      * @param dto Drone information to create
@@ -30,10 +29,10 @@ public interface DroneMapper {
     BatteryLevelDto toBatteryLevelDto(Drone drone);
 
     /**
-     *
-     * @param drone
-     * @param medications
-     * @return
+     * Map drone entity and medication load information to drone load information
+     * @param drone entity
+     * @param medications loaded medication information
+     * @return Information about loaded to Drone Medications
      */
     @Mapping(target = "currentLevel", source = "batteryCapacity")
     default DroneLoadInformationDto toDroneLoadInformation(Drone drone, List<LoadMedicationDto> medications) {
@@ -46,5 +45,10 @@ public interface DroneMapper {
         return new DroneLoadInformationDto(medications, currentWeight, drone.getWeightLimit());
     }
 
+    /**
+     * Drone Entity to Dto
+     * @param drone DB entity
+     * @return Drone Dto
+     */
     DroneDto droneToDto(Drone drone);
 }

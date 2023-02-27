@@ -1,72 +1,84 @@
-## Drones
+# Drone Service
 
-[[_TOC_]]
+Rest service to interact with Drone.
 
----
+## Getting Started
+____
 
-:scroll: **START**
+Project needed to be imported as maven project and Java 17 must be used.
+
+### Building
+___
+
+To build runnable jar:
+
+```sh
+$ ./mvnw clean package
+```
+### Run application
+___
+To run application:
+```sh
+$ ./mvnw clean spring-boot:run -f pom.xml
+```
 
 
-### Introduction
+### Request examples
+____
 
-There is a major new technology that is destined to be a disruptive force in the field of transportation: **the drone**. Just as the mobile phone allowed developing countries to leapfrog older technologies for personal communication, the drone has the potential to leapfrog traditional transportation infrastructure.
+There are example requests
 
-Useful drone functions include delivery of small items that are (urgently) needed in locations with difficult access.
+- **Register a new drone**
 
----
+```
+curl --location 'localhost:8080/drones' \
+--header 'Content-Type: application/json' \
+--data '{
+    "serialNumber": "6A",
+    "model": "Lightweight",
+    "batteryCapacity": 0,
+    "weightLimit": 490
+}'
+```
+  where ...
 
-### Task description
+  Result is created Drone:
 
-We have a fleet of **10 drones**. A drone is capable of carrying devices, other than cameras, and capable of delivering small loads. For our use case **the load is medications**.
+```json
+{
+  "serialNumber": "6A",
+  "model": "Lightweight",
+  "weightLimit": 490.0,
+  "batteryCapacity": 0,
+  "state": "IDLE"
+}
+```
 
-A **Drone** has:
-- serial number (100 characters max);
-- model (Lightweight, Middleweight, Cruiserweight, Heavyweight);
-- weight limit (500gr max);
-- battery capacity (percentage);
-- state (IDLE, LOADING, LOADED, DELIVERING, DELIVERED, RETURNING).
-
-Each **Medication** has: 
-- name (allowed only letters, numbers, ‘-‘, ‘_’);
-- weight;
-- code (allowed only upper case letters, underscore and numbers);
-- image (picture of the medication case).
-
-Develop a service via REST API that allows clients to communicate with the drones (i.e. **dispatch controller**). The specific communicaiton with the drone is outside the scope of this task. 
-
-The service should allow:
-- registering a drone;
-- loading a drone with medication items;
-- checking loaded medication items for a given drone; 
-- checking available drones for loading;
-- check drone battery level for a given drone;
-
-> Feel free to make assumptions for the design approach. 
-
----
-
-### Requirements
-
-While implementing your solution **please take care of the following requirements**: 
-
-#### Functional requirements
-
-- There is no need for UI;
-- Prevent the drone from being loaded with more weight that it can carry;
-- Prevent the drone from being in LOADING state if the battery level is **below 25%**;
-- Introduce a periodic task to check drones battery levels and create history/audit event log for this.
-
----
-
-#### Non-functional requirements
-
-- Input/output data must be in JSON format;
-- Your project must be buildable and runnable;
-- Your project must have a README file with build/run/test instructions (use DB that can be run locally, e.g. in-memory, via container);
-- Required data must be preloaded in the database.
-- JUnit tests are mandatory;
-- Advice: Show us how you work through your commit history.
+### Swagger UI
 
 ---
+Service has as swagger-ui page located:
+```
+http://localhost:8080/swagger-ui.html
+```
 
-:scroll: **END**
+### Unit Testing
+___
+To run unit tests:
+```sh
+$ ./mvnw clean test
+```
+
+## Testing Service via Docker
+
+For testing Drone Service with required environment provided a **docker-compose-test.yaml** file.
+
+There are several steps to deploy Drone Service:
+1. Build an executable jar:
+```sh
+$ ./mvnw clean package
+```
+2. Deploy via docker-compose:
+```sh
+$ docker-compose -f docker-compose-test.yml  up --build -d
+```

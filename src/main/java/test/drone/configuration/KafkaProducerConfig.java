@@ -14,6 +14,10 @@ import test.drone.entity.event.Event;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Kafka producer config for different events
+ * @param <E>
+ */
 @Configuration
 public class KafkaProducerConfig<E extends Event> {
     @Value("${spring.kafka.producer.bootstrap-servers}")
