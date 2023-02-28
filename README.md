@@ -20,17 +20,18 @@ $ ./mvnw clean package
 ___
 To launch a Drone service there are must to set a several environment variables:
 
-| name              	| description                    	| example                                    	|
-|-------------------	|--------------------------------	|--------------------------------------------	|
-| KAFKA_SERVER      	| kafka server                   	| localhost:29092                            	|
-| KAFKA_TOPIC_NAME  	| topic name to send events      	| topic                                      	|
-| DB_URL            	| database url                   	| jdbc:postgresql://localhost:5432/drones_db 	|
-| DB_USER           	| database user                  	| testUser                                   	|
-| DB_PASSWORD       	| database password              	| testPassword                               	|
-| MINIO_URL         	| minio url to save images       	| http://localhost:9000                      	|
-| MINIO_ACCESS_KEY  	| access key (user) to minio     	| testKey                                    	|
-| MINIO_SECRET_KEY  	| secret key (password) to minio 	| testSecret                                 	|
-| MINIO_BUCKET_NAME 	| bucket name to store images    	| test-bucket                                	|
+| name              	| description                             	| example                                    	|
+|-------------------	|-----------------------------------------	|--------------------------------------------	|
+| KAFKA_SERVER      	| kafka server                            	| localhost:29092                            	|
+| KAFKA_TOPIC_NAME  	| topic name to send events               	| topic                                      	|
+| DB_URL            	| database url                            	| jdbc:postgresql://localhost:5432/drones_db 	|
+| DB_USER           	| database user                           	| testUser                                   	|
+| DB_PASSWORD       	| database password                       	| testPassword                               	|
+| MINIO_URL         	| minio url to save images                	| http://localhost:9000                      	|
+| MINIO_ACCESS_KEY  	| access key (user) to minio              	| testKey                                    	|
+| MINIO_SECRET_KEY  	| secret key (password) to minio          	| testSecret                                 	|
+| MINIO_BUCKET_NAME 	| bucket name to store images             	| test-bucket                                	|
+| CRON_EXPRESSION   	| Spring CronExpression for periodic task 	| "*/30 * * * * *"                           	|
 
 ### Run application
 ___
