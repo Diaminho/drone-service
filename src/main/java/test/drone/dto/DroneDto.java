@@ -7,8 +7,6 @@ import jakarta.validation.constraints.Size;
 import test.drone.entity.Model;
 import test.drone.entity.State;
 
-import java.util.List;
-
 /**
  * Drone's database entity dto
  * @param serialNumber of drone

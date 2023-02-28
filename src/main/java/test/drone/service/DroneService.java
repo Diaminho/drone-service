@@ -41,13 +41,6 @@ public class DroneService {
      */
     @Transactional(rollbackFor = Exception.class)
     public DroneDto registerDrone(CreateDroneDto createDroneDto) {
-        // validate uniqeu
-        try {
-            getDrone(createDroneDto.serialNumber());
-        } catch (DroneNotFoundException e) {
-            //it is ok
-        }
-
         log.info("Registering a drone: {}", createDroneDto);
         Drone drone = droneMapper.fromCreateDto(createDroneDto);
         var saved = droneRepository.save(drone);

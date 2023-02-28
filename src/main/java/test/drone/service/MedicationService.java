@@ -25,7 +25,6 @@ public class MedicationService {
     private final DroneToMedicationRepository droneToMedicationRepository;
     private final MedicationMapper medicationMapper;
     private final DroneToMedicationMapper droneToMedicationMapper;
-    private final MinioService minioService;
 
     public Medication findById(Long id) {
         return medicationRepository.findById(id).orElseThrow(() -> new MedicationNotFoundException(id));
@@ -51,14 +50,6 @@ public class MedicationService {
 
         return found
                 .stream()
-                .peek(droneToMedication -> {
-                    var medication = droneToMedication.getMedication();
-                    //download image
-                    var base64Image = minioService.downloadFile(medication.getImage());
-                    medication.setImage(base64Image);
-
-                    droneToMedication.setMedication(medication);
-                })
                 .map(droneToMedicationMapper::toLoadedMedicationDto)
                 .collect(Collectors.toList());
     }

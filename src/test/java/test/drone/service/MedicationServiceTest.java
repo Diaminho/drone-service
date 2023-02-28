@@ -27,8 +27,6 @@ public class MedicationServiceTest {
     @Mock
     private DroneToMedicationMapper droneToMedicationMapper;
     @Mock
-    private MinioService minioService;
-    @Mock
     private MedicationRepository medicationRepository;
 
     @Mock
@@ -60,7 +58,6 @@ public class MedicationServiceTest {
 
         assertTrue(found.isEmpty());
 
-        verify(minioService, times(0)).downloadFile(anyString());
         verify(droneToMedicationMapper, times(0)).toLoadedMedicationDto(any());
     }
 
@@ -68,13 +65,7 @@ public class MedicationServiceTest {
     public void findAllLoadedMedicationsForDrone() {
         var drone = mock(Drone.class);
 
-        var imageUrl = "ww/test.jpg";
-
-        var medication = mock(Medication.class);
-        when(medication.getImage()).thenReturn(imageUrl);
-
         var droneToMedication = mock(DroneToMedication.class);
-        when(droneToMedication.getMedication()).thenReturn(medication);
 
         when(droneToMedicationRepository.findAllByDrone(eq(drone))).thenReturn(Collections.singletonList(droneToMedication));
 
@@ -82,7 +73,6 @@ public class MedicationServiceTest {
 
         assertFalse(found.isEmpty());
 
-        verify(minioService, times(1)).downloadFile(eq(imageUrl));
         verify(droneToMedicationMapper, times(1)).toLoadedMedicationDto(any());
     }
 

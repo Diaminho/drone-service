@@ -10,6 +10,9 @@ import test.drone.entity.Drone;
 import test.drone.entity.event.DroneBatteryCheckLevelEvent;
 import test.drone.repository.DroneRepository;
 
+/**
+ * Task for periodic drone's battery level check
+ */
 @Component
 @RequiredArgsConstructor
 @Slf4j
@@ -35,9 +38,7 @@ public class CheckBatteryTask {
         event.setCurrentBatteryLevel(drone.getBatteryCapacity());
         event.setDroneSerialNumber(drone.getSerialNumber());
 
-        // don't check result
+        // don't check result for current implementation
         kafkaTemplate.send(topicName, event);
-
-        log.info("Sent Event to kafka: " + event);
     }
 }

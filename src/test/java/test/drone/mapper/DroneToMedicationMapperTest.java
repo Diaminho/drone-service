@@ -2,8 +2,8 @@ package test.drone.mapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
+import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 import test.drone.dto.CreateDroneToMedicationDto;
 import test.drone.dto.LoadMedicationDto;
@@ -11,13 +11,19 @@ import test.drone.entity.Drone;
 import test.drone.entity.DroneMedicationKey;
 import test.drone.entity.DroneToMedication;
 import test.drone.entity.Medication;
+import test.drone.service.MinioService;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.mockito.ArgumentMatchers.eq;
+import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
 public class DroneToMedicationMapperTest {
+    @Mock
+    private MinioService minioService;
+
     @InjectMocks
-    private DroneToMedicationMapper droneToMedicationMapper = Mappers.getMapper(DroneToMedicationMapper.class);
+    private DroneToMedicationMapper droneToMedicationMapper;
 
     @Test
     public void createDroneToMedicationLinkTest() {
@@ -55,6 +61,11 @@ public class DroneToMedicationMapperTest {
         var medication = new Medication();
         medication.setId(2L);
         medication.setWeight(100D);
+        medication.setCode("code");
+        medication.setImage("image");
+
+        var base64Image = "base64";
+        when(minioService.downloadFile(eq(medication.getImage()))).thenReturn(base64Image);
 
         var entity = new DroneToMedication();
         entity.setMedication(medication);
@@ -67,7 +78,7 @@ public class DroneToMedicationMapperTest {
 
         entity.setId(id);
 
-        var expected = new LoadMedicationDto(medication.getId(), entity.getCount(), medication.getName(), medication.getWeight(), medication.getCode(), medication.getImage());
+        var expected = new LoadMedicationDto(medication.getId(), entity.getCount(), medication.getName(), medication.getWeight(), medication.getCode(), base64Image);
 
         var result = droneToMedicationMapper.toLoadedMedicationDto(entity);
         assertEquals(expected, result);

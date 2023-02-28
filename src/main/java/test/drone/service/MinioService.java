@@ -8,6 +8,9 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 import java.util.Base64;
 
+/**
+ * Service to interact with MinIO
+ */
 @Service
 @Slf4j
 @RequiredArgsConstructor
