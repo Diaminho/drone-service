@@ -1,5 +1,6 @@
 package test.drone.entity;
 
+import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 
 /**
@@ -7,5 +8,12 @@ import io.swagger.v3.oas.annotations.media.Schema;
  */
 @Schema(description = "Drone's model names")
 public enum Model {
-    Lightweight, Middleweight, Cruiserweight, Heavyweight
+    @JsonProperty("Lightweight")
+    LIGHTWEIGHT,
+    @JsonProperty("Middleweight")
+    MIDDLEWEIGHT,
+    @JsonProperty("Cruiserweight")
+    CRUISERWEIGHT,
+    @JsonProperty("Heavyweight")
+    HEAVYWEIGHT
 }

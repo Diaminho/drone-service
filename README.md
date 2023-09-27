@@ -3,11 +3,13 @@
 Rest service to interact with Drone.
 
 ## Getting Started
+
 ____
 
 Project needed to be imported as maven project and Java 17 must be used.
 
 ### Building
+
 ___
 
 To build a runnable jar:
@@ -17,31 +19,35 @@ $ ./mvnw clean package
 ```
 
 ## Environment variables
+
 ___
 To launch a Drone service there are must to set a several environment variables:
 
-| name              	| description                             	| example                                    	|
-|-------------------	|-----------------------------------------	|--------------------------------------------	|
-| KAFKA_SERVER      	| kafka server                            	| localhost:29092                            	|
-| KAFKA_TOPIC_NAME  	| topic name to send events               	| topic                                      	|
-| DB_URL            	| database url                            	| jdbc:postgresql://localhost:5432/drones_db 	|
-| DB_USER           	| database user                           	| testUser                                   	|
-| DB_PASSWORD       	| database password                       	| testPassword                               	|
-| MINIO_URL         	| minio url to save images                	| http://localhost:9000                      	|
-| MINIO_ACCESS_KEY  	| access key (user) to minio              	| testKey                                    	|
-| MINIO_SECRET_KEY  	| secret key (password) to minio          	| testSecret                                 	|
-| MINIO_BUCKET_NAME 	| bucket name to store images             	| test-bucket                                	|
-| CRON_EXPRESSION   	| Spring CronExpression for periodic task 	| "*/30 * * * * *"                           	|
+| name              	  | description                             	                     | example                                    	 |
+|----------------------|---------------------------------------------------------------|----------------------------------------------|
+| KAFKA_ENABLED      	 | is kafka enabled on this service                            	 | true                    	                    |
+| KAFKA_SERVER      	  | kafka server                            	                     | localhost:29092                            	 |
+| KAFKA_TOPIC_NAME  	  | topic name to send events               	                     | topic                                      	 |
+| DB_URL            	  | database url                            	                     | jdbc:postgresql://localhost:5432/drones_db 	 |
+| DB_USER           	  | database user                           	                     | testUser                                   	 |
+| DB_PASSWORD       	  | database password                       	                     | testPassword                               	 |
+| MINIO_URL         	  | minio url to save images                	                     | http://localhost:9000                      	 |
+| MINIO_ACCESS_KEY  	  | access key (user) to minio              	                     | testKey                                    	 |
+| MINIO_SECRET_KEY  	  | secret key (password) to minio          	                     | testSecret                                 	 |
+| MINIO_BUCKET_NAME 	  | bucket name to store images             	                     | test-bucket                                	 |
+| CRON_EXPRESSION   	  | Spring CronExpression for periodic task 	                     | "*/30 * * * * *"                           	 |
 
 ### Run application
+
 ___
 To run application:
+
 ```sh
 $ ./mvnw clean spring-boot:run -f pom.xml
 ```
 
-
 ### Request examples
+
 ____
 
 There are example requests
@@ -58,13 +64,15 @@ curl --location 'localhost:8080/drones' \
     "weightLimit": 490
 }'
 ```
-  where
-  - **serialNumber** - serialNumber of drone;
-  - **model** - model of drone;
-  - **batteryCapacity** - current battery level;
-  - **weightLimit** - drone's weight limit for load in grams.
 
-  Result is created Drone:
+where
+
+- **serialNumber** - serialNumber of drone;
+- **model** - model of drone;
+- **batteryCapacity** - current battery level;
+- **weightLimit** - drone's weight limit for load in grams.
+
+Result is created Drone:
 
 ```json
 {
@@ -81,7 +89,9 @@ curl --location 'localhost:8080/drones' \
 ```
 curl --location 'localhost:8080/drones/{serialNumber}/battery'
 ```
+
 where
+
 - **serialNumber** - serialNumber of drone;
 
 Result is found information about drone's battery level:
@@ -97,7 +107,9 @@ Result is found information about drone's battery level:
 ```
 curl --location 'localhost:8080/drones/{serialNumber}/load'
 ```
+
 where
+
 - **serialNumber** - serialNumber of drone;
 
 Result is found information about drone's load with medication information:
@@ -182,13 +194,16 @@ Result is Drone's information with changed state:
 
 ---
 Service has as swagger-ui page located:
+
 ```
 http://localhost:8080/swagger-ui.html
 ```
 
 ### Unit Testing
+
 ___
 To run unit tests:
+
 ```sh
 $ ./mvnw clean test
 ```
@@ -198,11 +213,15 @@ $ ./mvnw clean test
 For testing Drone Service with required environment provided a **docker-compose-test.yaml** file.
 
 There are several steps to deploy Drone Service:
+
 1. Build an executable jar:
+
 ```sh
 $ ./mvnw clean package
 ```
+
 2. Deploy via docker-compose:
+
 ```sh
 $ docker-compose -f docker-compose-test.yml  up --build -d
 ```

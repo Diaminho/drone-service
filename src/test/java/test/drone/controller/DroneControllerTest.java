@@ -1,4 +1,4 @@
-package controller;
+package test.drone.controller;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -8,8 +8,6 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.mock.web.MockHttpServletRequest;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-import test.drone.controller.DroneController;
-
 import test.drone.dto.*;
 import test.drone.entity.Model;
 import test.drone.entity.State;
@@ -18,11 +16,10 @@ import test.drone.service.DroneService;
 import java.util.Collections;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class DroneControllerTest {
+class DroneControllerTest {
     @Mock
     private DroneService droneService;
 
@@ -30,28 +27,28 @@ public class DroneControllerTest {
     private DroneController droneController;
 
     @Test
-    public void createDroneTest() {
+    void createDroneTest() {
         var request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         short battery = 95;
-        var createDroneDto = new CreateDroneDto("12", Model.Cruiserweight, 55D, battery);
+        var createDroneDto = new CreateDroneDto("12", Model.CRUISERWEIGHT, 55D, battery);
 
         var droneDto = new DroneDto(createDroneDto.serialNumber(), createDroneDto.model(), createDroneDto.weightLimit(), createDroneDto.batteryCapacity(), State.IDLE);
 
-        when(droneService.registerDrone(eq(createDroneDto))).thenReturn(droneDto);
+        when(droneService.registerDrone(createDroneDto)).thenReturn(droneDto);
         var response = droneController.registerDrone(createDroneDto);
 
         assertEquals(droneDto, response);
     }
 
     @Test
-    public void getAvailableDronesForLoading() {
+    void getAvailableDronesForLoading() {
         var request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         short battery = 95;
-        var droneDto = new DroneDto("12", Model.Cruiserweight, 55D, battery, State.IDLE);
+        var droneDto = new DroneDto("12", Model.CRUISERWEIGHT, 55D, battery, State.IDLE);
 
         var foundDrones = Collections.singletonList(droneDto);
         when(droneService.getAvailableForLoadingDrones()).thenReturn(foundDrones);
@@ -61,12 +58,12 @@ public class DroneControllerTest {
     }
 
     @Test
-    public void getBatteryTest() {
+    void getBatteryTest() {
         var request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         short battery = 95;
 
-        var droneDto = new DroneDto("12", Model.Cruiserweight, 55D, battery, State.IDLE);
+        var droneDto = new DroneDto("12", Model.CRUISERWEIGHT, 55D, battery, State.IDLE);
 
         var batteryLevelDto = new BatteryLevelDto(droneDto.batteryCapacity());
         when(droneService.getBatteryLevel(droneDto.serialNumber())).thenReturn(batteryLevelDto);
@@ -76,12 +73,12 @@ public class DroneControllerTest {
     }
 
     @Test
-    public void checkLoadingDroneTest() {
+    void checkLoadingDroneTest() {
         var request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
         short battery = 95;
 
-        var droneDto = new DroneDto("12", Model.Cruiserweight, 55D, battery, State.IDLE);
+        var droneDto = new DroneDto("12", Model.CRUISERWEIGHT, 55D, battery, State.IDLE);
 
         var loadMedicationDto = new LoadMedicationDto(1L, (short) 1, "name", 221d, "code", "image");
 
@@ -93,15 +90,15 @@ public class DroneControllerTest {
     }
 
     @Test
-    public void loadDroneTest() {
+    void loadDroneTest() {
         var request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
 
         var createLoad = new CreateLoadMedicationDto(1L, (short) 1);
         var loadDroneDto = new LoadDroneDto("1L", Collections.singletonList(createLoad));
 
-        var droneDto = new DroneDto("1", Model.Cruiserweight, 2d, (short) 2, State.LOADING);
-        when(droneService.loadDrone(eq(loadDroneDto))).thenReturn(droneDto);
+        var droneDto = new DroneDto("1", Model.CRUISERWEIGHT, 2d, (short) 2, State.LOADING);
+        when(droneService.loadDrone(loadDroneDto)).thenReturn(droneDto);
         var response = droneController.loadDrone(loadDroneDto);
 
         assertEquals(droneDto, response);

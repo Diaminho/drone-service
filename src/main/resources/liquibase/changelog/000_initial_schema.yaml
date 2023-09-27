@@ -1,0 +1,77 @@
+databaseChangeLog:
+  - changeSet:
+      id: '000'
+      author: Dmitriy Pichugin
+      comment: Init schema creation
+      changes:
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    nullable: false
+                    primaryKey: true
+                    primaryKeyName: drones_pkey
+                  name: serial_number
+                  type: varchar
+              - column:
+                  name: model
+                  type: varchar
+              - column:
+                  name: weight_limit
+                  type: double
+              - column:
+                  name: battery_capacity
+                  type: smallint
+              - column:
+                  name: state
+                  type: varchar
+            tableName: drones
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    primaryKey: true
+                    primaryKeyName: medications_pkey
+                  name: id
+                  type: bigint
+                  autoIncrement: true
+              - column:
+                  name: name
+                  type: varchar
+              - column:
+                  name: weight
+                  type: double
+              - column:
+                  name: code
+                  type: varchar
+              - column:
+                  name: image_url
+                  type: varchar
+            tableName: medications
+        - createTable:
+            columns:
+              - column:
+                  constraints:
+                    referencedColumnNames: serial_number
+                    foreignKeyName: drones_fk
+                    referencedTableName: drones
+                  name: drone_serial_number
+                  type: varchar
+              - column:
+                  constraints:
+                    referencedColumnNames: id
+                    foreignKeyName: medications_fk
+                    referencedTableName: medications
+                  name: medication_id
+                  type: bigint
+              - column:
+                  name: count
+                  type: smallint
+            tableName: drones_to_medications
+        - rollback:
+            - dropTable:
+                tableName: drones_to_medications
+            - dropTable:
+                tableName: drones
+            - dropTable:
+                tableName: medications

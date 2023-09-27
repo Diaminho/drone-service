@@ -10,8 +10,6 @@ import io.swagger.v3.oas.annotations.responses.ApiResponses;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.Size;
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.http.MediaType;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
@@ -25,12 +23,14 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(value = "drones", produces = MediaType.APPLICATION_JSON_VALUE)
-@Slf4j
-@RequiredArgsConstructor
 @Validated
 @Tag(name = "Drones Controller", description = "Drone's API")
 public class DroneController {
     private final DroneService droneService;
+
+    public DroneController(DroneService droneService) {
+        this.droneService = droneService;
+    }
 
     @Operation(description = "Register a new drone")
     @ApiResponses(value = {

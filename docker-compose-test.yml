@@ -95,5 +95,6 @@ services:
       MINIO_ACCESS_KEY: test
       MINIO_SECRET_KEY: password
       MINIO_BUCKET_NAME: medication-images
+      #SPRING_PROFILES_ACTIVE: test
 volumes:
   minio_storage: {}

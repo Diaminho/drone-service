@@ -2,7 +2,6 @@ package test.drone.service;
 
 import io.minio.GetObjectResponse;
 import io.minio.MinioClient;
-import lombok.SneakyThrows;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -19,17 +18,15 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
-public class MinioServiceTest {
+class MinioServiceTest {
     @Mock
     private MinioClient minioClient;
 
     @InjectMocks
     private MinioService minioService;
 
-
-    @SneakyThrows
     @Test
-    public void downloadExistingFile() {
+    void downloadExistingFile() throws Exception {
         ReflectionTestUtils.setField(minioService, "bucketName", "test");
 
         var url = "ww/test.jpg";
@@ -41,18 +38,16 @@ public class MinioServiceTest {
 
         when(minioClient.getObject(any())).thenReturn(getObjectResponse);
 
-        var receivedBase64Content = minioService.downloadFile(url);
+        var receivedBase64Content = minioService.downloadFileAsBase64(url);
         assertEquals(base64Content, receivedBase64Content);
     }
 
-    @SneakyThrows
     @Test
-    public void downloadNonExistingFile() {
+    void downloadNonExistingFile() throws Exception {
         ReflectionTestUtils.setField(minioService, "bucketName", "test");
         var url = "ww/test.jpg";
 
         when(minioClient.getObject(any())).thenThrow(new RuntimeException("Cannot find file"));
-
-        assertThrows(RuntimeException.class, () -> minioService.downloadFile(url));
+        assertThrows(RuntimeException.class, () -> minioService.downloadFileAsBase64(url));
     }
 }

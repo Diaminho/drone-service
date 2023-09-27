@@ -1,7 +1,5 @@
 package test.drone.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 import test.drone.dto.CreateDroneToMedicationDto;
 import test.drone.dto.LoadMedicationDto;
@@ -15,16 +13,29 @@ import test.drone.repository.DroneToMedicationRepository;
 import test.drone.repository.MedicationRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 @Service
-@Slf4j
-@RequiredArgsConstructor
 public class MedicationService {
     private final MedicationRepository medicationRepository;
     private final DroneToMedicationRepository droneToMedicationRepository;
     private final MedicationMapper medicationMapper;
     private final DroneToMedicationMapper droneToMedicationMapper;
+
+    private final MinioService minioService;
+
+    public MedicationService(
+            MedicationRepository medicationRepository,
+            DroneToMedicationRepository droneToMedicationRepository,
+            MedicationMapper medicationMapper,
+            DroneToMedicationMapper droneToMedicationMapper,
+            MinioService minioService) {
+
+        this.medicationRepository = medicationRepository;
+        this.droneToMedicationRepository = droneToMedicationRepository;
+        this.medicationMapper = medicationMapper;
+        this.droneToMedicationMapper = droneToMedicationMapper;
+        this.minioService = minioService;
+    }
 
     public Medication findById(Long id) {
         return medicationRepository.findById(id).orElseThrow(() -> new MedicationNotFoundException(id));
@@ -48,9 +59,13 @@ public class MedicationService {
     public List<LoadMedicationDto> findAllLoadedMedicationsForDrone(Drone drone) {
         List<DroneToMedication> found = droneToMedicationRepository.findAllByDrone(drone);
 
+        // TODO check max threads for MinIO
         return found
-                .stream()
-                .map(droneToMedicationMapper::toLoadedMedicationDto)
-                .collect(Collectors.toList());
+                .parallelStream()
+                .map(droneToMedication -> {
+                    var base64Image = minioService.downloadFileAsBase64(droneToMedication.getMedication().getImageUrl());
+                    return droneToMedicationMapper.toLoadedMedicationDto(droneToMedication, base64Image);
+                })
+                .toList();
     }
 }

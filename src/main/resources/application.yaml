@@ -21,7 +21,10 @@ spring:
       ddl-auto: validate
   liquibase:
     enabled: true
-    change-log: classpath:liquibase/master.xml
+    change-log: classpath:liquibase/master.yaml
+    # https://docs.liquibase.com/concepts/changelogs/attributes/contexts.html
+    # If you do not specify any contexts in the CLI at runtime, every changeset in your changelog runs, even if they have contextFilters attached.
+    contexts: default
 
 cron-expression: ${CRON_EXPRESSION}
 
@@ -32,5 +35,6 @@ minio:
   bucket-name: ${MINIO_BUCKET_NAME}
 
 kafka:
+  enabled: ${KAFKA_ENABLED:true}
   topic:
     name: ${KAFKA_TOPIC_NAME}

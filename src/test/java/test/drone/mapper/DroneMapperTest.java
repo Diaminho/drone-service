@@ -2,7 +2,6 @@ package test.drone.mapper;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mapstruct.factory.Mappers;
 import org.mockito.InjectMocks;
 import org.mockito.junit.jupiter.MockitoExtension;
 import test.drone.dto.*;
@@ -15,12 +14,12 @@ import java.util.Collections;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @ExtendWith(MockitoExtension.class)
-public class DroneMapperTest {
+class DroneMapperTest {
     @InjectMocks
-    private DroneMapper droneMapper = Mappers.getMapper(DroneMapper.class);
+    private DroneMapper droneMapper;
 
     @Test
-    public void droneToDtoTest() {
+    void droneToDtoTest() {
         var drone = new Drone();
 
         var dto = new DroneDto(drone.getSerialNumber(), drone.getModel(), drone.getWeightLimit(), drone.getBatteryCapacity(), drone.getState());
@@ -30,7 +29,7 @@ public class DroneMapperTest {
     }
 
     @Test
-    public void droneToBatteryLevelDtoTest() {
+    void droneToBatteryLevelDtoTest() {
         var drone = new Drone();
         drone.setBatteryCapacity((short) 99);
 
@@ -41,8 +40,8 @@ public class DroneMapperTest {
     }
 
     @Test
-    public void fromCreateDtoTest() {
-        var createDto = new CreateDroneDto("11W", Model.Cruiserweight, 44D, (short) 99);
+    void fromCreateDtoTest() {
+        var createDto = new CreateDroneDto("11W", Model.CRUISERWEIGHT, 44D, (short) 99);
 
         var drone = new Drone();
         drone.setState(State.IDLE);
@@ -56,10 +55,10 @@ public class DroneMapperTest {
     }
 
     @Test
-    public void toDroneLoadInformationTest() {
+    void toDroneLoadInformationTest() {
         var drone = new Drone();
         drone.setState(State.IDLE);
-        drone.setModel(Model.Cruiserweight);
+        drone.setModel(Model.CRUISERWEIGHT);
         drone.setBatteryCapacity((short) 99);
         drone.setSerialNumber("11W");
         drone.setWeightLimit(44D);

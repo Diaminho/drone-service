@@ -1,36 +1,33 @@
 package test.drone.mapper;
 
-import lombok.RequiredArgsConstructor;
-import org.springframework.stereotype.Component;
-import test.drone.dto.CreateDroneToMedicationDto;
+import org.springframework.stereotype.Service;
 import test.drone.dto.LoadMedicationDto;
 import test.drone.entity.Drone;
 import test.drone.entity.DroneMedicationKey;
 import test.drone.entity.DroneToMedication;
-import test.drone.service.MinioService;
+import test.drone.entity.Medication;
 
 /**
  * Mapper for link between Drone and Medication (Loaded Medications to Drone)
  */
-@Component
-@RequiredArgsConstructor
+@Service
 public class DroneToMedicationMapper {
-    private final MinioService minioService;
-
     /**
-     * Generates DroneToMedication Entity to link loaded medications and drone
-     * @param drone Drone information
-     * @param item Loaded Medication information
-     * @return DroneToMedication Entity
+     * Generates Entity for Medication - Drone relation with medication count
+     * @param drone drone info
+     * @param medication medication info
+     * @param count medication count
+     * @return entity
      */
-    public DroneToMedication toDroneToMediation(Drone drone, CreateDroneToMedicationDto item) {
+    public DroneToMedication generateDroneToMedication(Drone drone, Medication medication, Short count) {
         var newOne = new DroneToMedication();
         newOne.setDrone(drone);
-        newOne.setMedication(item.medication());
-        newOne.setCount(item.count());
+
+        newOne.setMedication(medication);
+        newOne.setCount(count);
 
         var id = new DroneMedicationKey();
-        id.setMedicationId(item.medication().getId());
+        id.setMedicationId(medication.getId());
         id.setDroneSerialNumber(drone.getSerialNumber());
 
         newOne.setId(id);
@@ -41,13 +38,11 @@ public class DroneToMedicationMapper {
     /**
      * Dto representation of loaded Medications for specific Drone
      * @param droneToMedication Drone to Loaded Medication database information
+     * @param imageBase64 Medication image base64 encoded
      * @return Loaded medications as dto
      */
-    public LoadMedicationDto toLoadedMedicationDto(DroneToMedication droneToMedication) {
+    public LoadMedicationDto toLoadedMedicationDto(DroneToMedication droneToMedication, String imageBase64) {
         var medication = droneToMedication.getMedication();
-
-        // download image from minio
-        var base64Image = minioService.downloadFile(medication.getImage());
 
         return new LoadMedicationDto(
                 medication.getId(),
@@ -55,7 +50,7 @@ public class DroneToMedicationMapper {
                 medication.getName(),
                 medication.getWeight(),
                 medication.getCode(),
-                base64Image
+                imageBase64
         );
     }
 }

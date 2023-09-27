@@ -1,0 +1,26 @@
+databaseChangeLog:
+  - changeSet:
+      id: '001'
+      author: Dmitriy Pichugin
+      comment: Init TEST data insertion
+      changes:
+        - sql: "INSERT INTO drones (serial_number, model, weight_limit, battery_capacity, state) 
+          VALUES ('1A', 'LIGHTWEIGHT', 55.5, 95, 'IDLE'),('2A', 'MIDDLEWEIGHT', 155.5, 45, 'DELIVERING'),
+          ('3A', 'CRUISERWEIGHT', 255.5, 75, 'LOADED'),
+          ('4A', 'HEAVYWEIGHT', 455.5, 95, 'IDLE');
+
+          INSERT INTO medications (name, weight, code, image_url)
+          VALUES ('Pill One', 12, '13123123', 'http://minio:9000/medications-images/1.jpg'),
+          ('Pill Two', 85, '99877666', 'http://minio:9000/medications-images/2.jpg'),
+          ('Threat Two', 185, '2222', 'http://minio:9000/medications-images/3.jpg');
+
+          INSERT INTO drones_to_medications (drone_serial_number, medication_id, count)
+          VALUES ('2A', (SELECT id FROM medications WHERE name = 'Pill One'), 1),
+          ('3A', (SELECT id FROM medications WHERE name = 'Pill Two'), 2);"
+        - rollback:
+            - delete:
+                tableName: drones_to_medications
+            - delete:
+                tableName: drones
+            - delete:
+                tableName: medications

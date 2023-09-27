@@ -1,7 +1,7 @@
 package test.drone.service;
 
-import lombok.RequiredArgsConstructor;
-import lombok.extern.slf4j.Slf4j;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import test.drone.dto.*;
@@ -17,22 +17,31 @@ import test.drone.repository.DroneRepository;
 import test.drone.repository.DroneToMedicationRepository;
 
 import java.util.List;
-import java.util.stream.Collectors;
 
 /**
  * Service to manipulate Drone
  */
 @Service
-@Slf4j
-@RequiredArgsConstructor
 public class DroneService {
+    private static final Logger LOGGER = LoggerFactory.getLogger(DroneService.class);
+
     public static final Short MINIMAL_CHARGING_FOR_WORKING = 25;
     private final DroneRepository droneRepository;
     private final DroneToMedicationRepository droneToMedicationRepository;
-
-    private final DroneToMedicationMapper droneToMedicationMapper;
     private final DroneMapper droneMapper;
     private final MedicationService medicationService;
+
+    private final DroneToMedicationMapper droneToMedicationMapper;
+
+    public DroneService(DroneRepository droneRepository, DroneToMedicationRepository droneToMedicationRepository,
+                        DroneMapper droneMapper, MedicationService medicationService,
+                        DroneToMedicationMapper droneToMedicationMapper) {
+        this.droneRepository = droneRepository;
+        this.droneToMedicationRepository = droneToMedicationRepository;
+        this.droneMapper = droneMapper;
+        this.medicationService = medicationService;
+        this.droneToMedicationMapper = droneToMedicationMapper;
+    }
 
     /**
      * Create a new drone
@@ -41,13 +50,13 @@ public class DroneService {
      */
     @Transactional(rollbackFor = Exception.class)
     public DroneDto registerDrone(CreateDroneDto createDroneDto) {
-        log.info("Registering a drone: {}", createDroneDto);
+        LOGGER.info("Registering a drone: {}", createDroneDto);
         Drone drone = droneMapper.fromCreateDto(createDroneDto);
         var saved = droneRepository.save(drone);
 
         var result =  droneMapper.droneToDto(saved);
 
-        log.info("Drone is registered: {}", result);
+        LOGGER.info("Drone is registered: {}", result);
 
         return result;
     }
@@ -58,7 +67,8 @@ public class DroneService {
      * @return Drone's battery information
      */
     public BatteryLevelDto getBatteryLevel(String droneSerialNumber) {
-        return droneMapper.toBatteryLevelDto(getDrone(droneSerialNumber));
+        var drone = getDrone(droneSerialNumber);
+        return droneMapper.toBatteryLevelDto(drone);
     }
 
     /**
@@ -72,7 +82,7 @@ public class DroneService {
         return foundDrones
                 .stream()
                 .map(droneMapper::droneToDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     /**
@@ -83,7 +93,7 @@ public class DroneService {
     @Transactional(rollbackFor = Exception.class)
     public DroneDto loadDrone(LoadDroneDto loadDroneInformation) {
         var serialNumber = loadDroneInformation.serialNumber();
-        log.info("Medications loading process is started for drone: {}", serialNumber);
+        LOGGER.info("Medications loading process is started for drone: {}", serialNumber);
 
         var foundDrone = getDrone(serialNumber);
 
@@ -118,7 +128,7 @@ public class DroneService {
         var saved = droneRepository.save(foundDrone);
         var result = droneMapper.droneToDto(saved);
 
-        log.info("Drone is loading: {}", result);
+        LOGGER.info("Drone is loading: {}", result);
 
         return result;
     }
@@ -139,7 +149,7 @@ public class DroneService {
         double currentWeight = 0;
 
         for (var info : medicationInfo) {
-            currentWeight += info.medication().getWeight() * info.count();
+            currentWeight += info.medication().weight() * info.count();
         }
 
         return currentWeight;
@@ -148,9 +158,10 @@ public class DroneService {
     private void generateDroneToMedicationInformation (Drone foundDrone, List<CreateDroneToMedicationDto> foundMedications) {
         foundMedications
                 .forEach(item -> {
-                    var entity = droneToMedicationMapper.toDroneToMediation(foundDrone, item);
+                    var medication = medicationService.findById(item.medication().id());
+                    var entity = droneToMedicationMapper.generateDroneToMedication(foundDrone, medication, item.count());
                     droneToMedicationRepository.save(entity);
-                    log.info("Medication {} is loading to drone: {}", item.medication(), entity.getDrone());
+                    LOGGER.info("Medication {} is loading to drone: {}", item.medication(), entity.getDrone());
                 });
     }
 

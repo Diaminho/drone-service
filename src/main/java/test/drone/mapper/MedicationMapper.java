@@ -1,6 +1,5 @@
 package test.drone.mapper;
-
-import org.mapstruct.Mapper;
+import org.springframework.stereotype.Service;
 import test.drone.dto.CreateDroneToMedicationDto;
 import test.drone.dto.MedicationDto;
 import test.drone.entity.Medication;
@@ -8,15 +7,23 @@ import test.drone.entity.Medication;
 /**
  * Mapper for Medication object transformation
  */
-@Mapper
-public interface MedicationMapper {
+@Service
+public class MedicationMapper {
 
     /**
      * Transforms database object to dto
      * @param medication database entity
      * @return Medication dto
      */
-    MedicationDto toDto(Medication medication);
+    public MedicationDto toDto(Medication medication) {
+        return new MedicationDto(
+                medication.getId(),
+                medication.getName(),
+                medication.getWeight(),
+                medication.getCode(),
+                medication.getImageUrl()
+        );
+    }
 
     /**
      * Creates dto to create DroneToMedication Entity
@@ -24,5 +31,8 @@ public interface MedicationMapper {
      * @param count Medication count
      * @return dto
      */
-    CreateDroneToMedicationDto toCreateDroneToMedication(Medication medication, Short count);
+    public CreateDroneToMedicationDto toCreateDroneToMedication(Medication medication, Short count) {
+        var medicationDto = toDto(medication);
+        return new CreateDroneToMedicationDto(medicationDto, count);
+    }
 }
