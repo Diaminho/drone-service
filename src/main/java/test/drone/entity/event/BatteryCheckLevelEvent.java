@@ -1,6 +1,9 @@
 package test.drone.entity.event;
 
 
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import java.util.Objects;
 
 /**
@@ -10,14 +13,15 @@ public class BatteryCheckLevelEvent extends Event {
     private final String droneSerialNumber;
     private final Short currentBatteryLevel;
 
-    public BatteryCheckLevelEvent(String droneSerialNumber, Short currentBatteryLevel) {
+    @JsonCreator
+    public BatteryCheckLevelEvent(
+            @JsonProperty("droneSerialNumber") String droneSerialNumber,
+            @JsonProperty("currentBatteryLevel") Short currentBatteryLevel) {
         super();
         this.droneSerialNumber = droneSerialNumber;
         this.currentBatteryLevel = currentBatteryLevel;
     }
 
-
-    // TODO read jackson and private fields serialization
     public String getDroneSerialNumber() {
         return droneSerialNumber;
     }

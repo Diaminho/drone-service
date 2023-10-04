@@ -20,7 +20,7 @@ import java.util.Map;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
 @Testcontainers
-class MinioServiceITTest {
+class MinioServiceIT {
     private static final int MINIO_PORT = 9000;
     private static final String MINIO_HOST_TEMPLATE = "http://localhost:%s/";
     private static final String DEFAULT_BUCKET = "test";

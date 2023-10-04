@@ -8,6 +8,9 @@ import java.util.Date;
 public abstract class Event {
     private final Date created = new Date();
 
+    protected Event() {
+    }
+
     public Date getCreated() {
         return created;
     }
